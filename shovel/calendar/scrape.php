@@ -303,6 +303,9 @@ foreach ($faculties as $acronym => $info) {
       $course['credit_value'] = $matches[4];
       $course['src_url'] = $info['url'].'#'.$anchor;
 
+      if ($course['faculty_acronym'] == 'ACTSC')
+        print_r($course);
+
       $offerings = explode(',', $course['offerings']);
       foreach ($offerings as $offering) {
         if ($offering == 'LEC') {
@@ -334,6 +337,14 @@ foreach ($faculties as $acronym => $info) {
       $course['description'] = strip_tags($data);
       next($tr);
 
+      // Term availability
+      preg_match('/\[.*?Offered:(.+?)]/i',$data,$match);
+      if (!empty($match[1])) { // if no information is provided, we don't know
+	$course["avail_fall"] = (strpos($match[1],"F")) ? 1 : -1;
+	$course["avail_winter"] = (strpos($match[1],"W")) ? 1 : -1;
+	$course["avail_spring"] = (strpos($match[1],"S")) ? 1 : -1;
+      }
+
       // And then some number of extra fields...
       $extra_fields = array();
       while (current($tr)) {
@@ -347,9 +358,9 @@ foreach ($faculties as $acronym => $info) {
             $course['coreq_desc'] = $data;
           } else if (0 === strpos($data, '(Cross-listed')) {
             $course['crosslist_desc'] = $data;
-          } else if (0 === strpos($data, 'Also offered by Distance Education')) {
+          } else if (0 === strpos($data, 'Also offered by Distance Education') || 0 === strpos($data,'Also offered Online')) {
             $course['has_dist_ed'] = true;
-          } else if (0 === strpos($data, 'Only offered by Distance Education')) {
+          } else if (0 === strpos($data, 'Only offered by Distance Education')  || 0 === strpos($data,'Only offered Online')) {
             $course['only_dist_ed'] = true;
           } else if (0 === strpos($data, 'Offered at St. Jerome\'s University')) {
             $course['only_stj'] = true;
@@ -381,8 +392,9 @@ foreach ($faculties as $acronym => $info) {
       if ($extra_fields) {
         $course['extra_fields'] = $extra_fields;
       }
-
-      $courses[$course['cid']] = $course;
+      if ($course['faculty_acronym'] == 'ACTSC')
+      $courseKey = $course['cid'].$course['faculty_acronym'].$course['course_number']; //ugly, but c'est la vie
+      $courses[$courseKey] = $course;
     }
   }
 
@@ -390,17 +402,22 @@ foreach ($faculties as $acronym => $info) {
   $html->__destruct();
   unset($html);
 }
-
+$courseKey = "";
 // Prune dead courses.
 $results = $db->query('SELECT * FROM courses;');
 while ($row = mysql_fetch_assoc($results)) {
-  if (!isset($courses[$row['cid']])) {
-    $db->query('DELETE FROM courses WHERE cid = "'.mysql_escape_string($row['cid']).'";');
+  $courseKey = $row['cid'].$row['faculty_acronym'].$row['course_number'];
+  if (!isset($courses[$courseKey])) {
+    $db->query('DELETE FROM courses WHERE cid = "'
+   .mysql_escape_string($row['cid']).' AND faculty_acronym = \''
+   .mysql_escape_String($row['faculty_acronym']).' AND course_number = \''
+   .mysql_escape_string($row['course_number']).'";');
   }
 }
 
 // And update existing ones/insert new ones.
 foreach ($courses as $cid => $course) {
+  //echo $course['faculty_acronym'] . ": " . $course['course_number'] . "\n";
   if (isset($course['extra_fields'])) {
     print_r($course['extra_fields']);
     unset($course['extra_fields']);
@@ -414,6 +431,8 @@ foreach ($courses as $cid => $course) {
     $update_query_arr []= $key.'="'.mysql_escape_string($value).'"';
   }
   $sql = 'INSERT INTO courses('.implode(',', array_keys($course)).') VALUES('.implode(',', $escaped_values).') ON DUPLICATE KEY UPDATE '.implode(',', $update_query_arr).';';
+ // if ($course['faculty_acronym'] == 'ACTSC' && $course['course_number'] == "446")
+ //   echo $sql;
   $db->query($sql);
 }
 

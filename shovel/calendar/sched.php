@@ -45,7 +45,7 @@ if (preg_match_all('/([0-9]+=[a-z]+ [0-9]+)/i', $index_data, $matches)) {
     }
 
     $terms []= $term_id;
-
+    echo "ID: " . $term_id . "Season: " . $term_season . "Year: " . $term_year . "Year cal: " . $calendar_years;
     $sql = 'INSERT INTO terms(term_id, term_season, term_year, calendar_years) VALUES("'.$term_id.'", "'.$term_season.'", "'.$term_year.'", "'.$calendar_years.'") ON DUPLICATE KEY UPDATE term_season="'.$term_season.'", term_year="'.$term_year.'", calendar_years="'.$calendar_years.'";';
     $db->query($sql);
   }
@@ -189,8 +189,9 @@ if (preg_match_all('/<OPTION VALUE="([A-Z]+)"(?: SELECTED)?>[A-Z]+/', $index_dat
 
     $html->__destruct();
     unset($html);
-
+//print_r($classes);
     foreach ($classes as $class) {
+	
       if (preg_match('/([A-Z]+) +([0-9A-Z]+)/', $class['location'], $match)) {
         $class['building'] = $match[1];
         $class['room'] = $match[2];
@@ -236,6 +237,7 @@ if (preg_match_all('/<OPTION VALUE="([A-Z]+)"(?: SELECTED)?>[A-Z]+/', $index_dat
           foreach ($reserve as $key => $value) {
             $update_query_arr []= $key.'="'.mysql_escape_string($value).'"';
           }
+	 print_r($reserve);
           $sql = 'INSERT INTO reserves('.implode(',', array_keys($reserve)).') VALUES('.implode(',', $escaped_values).') ON DUPLICATE KEY UPDATE '.implode(',', $update_query_arr).';';
           $db->query($sql);
         }
@@ -252,6 +254,8 @@ if (preg_match_all('/<OPTION VALUE="([A-Z]+)"(?: SELECTED)?>[A-Z]+/', $index_dat
       foreach ($class as $key => $value) {
         $update_query_arr []= $key.'="'.mysql_escape_string($value).'"';
       }
+	echo 'test!!!\n';
+     // print_r( $class);
       $sql = 'INSERT INTO classes('.implode(',', array_keys($class)).') VALUES('.implode(',', $escaped_values).') ON DUPLICATE KEY UPDATE '.implode(',', $update_query_arr).';';
       $db->query($sql);
     }

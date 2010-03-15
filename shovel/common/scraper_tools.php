@@ -35,7 +35,7 @@ function fetch_url($url, $expiry = CACHE_EXPIRY_TIMESPAN, $post_params = null) {
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     //curl_setopt($ch, CURLOPT_VERBOSE, true);
     curl_setopt($ch, CURLOPT_COOKIE, $cookie);
-    curl_setopt($ch, CURLOPT_USERAGENT, 'UWDataSpider/1.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1.7)');
+    curl_setopt($ch, CURLOPT_USERAGENT, 'UWDataSpiderVladTests/1.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6');
     if ($post_params) {
       curl_setopt($ch, CURLOPT_POST, count($post_params));
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
