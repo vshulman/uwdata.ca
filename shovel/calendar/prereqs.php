@@ -78,6 +78,7 @@ $university_courses = array(
   '4U Calculus and Vectors' => 'HSCALC 10U',
   '4U Advanced Functions and Introductory Calculus' => 'HSFUNC 10U',
   '4U Calculus and Vectors' => 'HSCALC 10U',
+  '4U Geometry and Discrete Mathematics' => 'HSGEO 10U',
 );
 
   
@@ -275,7 +276,7 @@ function extract_faculty_restrictions($reqs) {
     $match = trim(str_replace($words_to_exclude,"",$match[1]));
     $match = explode(" or ",$match);
     //echo "Not Open To:\n";
-    //foreach($match as &$restr) {
+    foreach($match as &$restr) {
       $restr = trim($restr);
     }
     print_r($match);

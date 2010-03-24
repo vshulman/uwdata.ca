@@ -4,7 +4,7 @@
 - To avoid issues with highschool course requirements (ex. "4U Functions and Relations") derailing the prereq parser, I added a replace which translates the course requirements into 
   the recognizable signature, so highschool courses will appear as HSMATH 11U for instance. The frontend can then choose to mark all HS* courses as taken, or something.
 
-- Added a table storing major/faculty restrictions, eg. "course not open to..."
+- Ddded a table storing major/faculty restrictions, eg. "course not open to..."
 
 - Courses that are "also available online" in the calendar now appear as dist_ed
 

@@ -335,15 +335,21 @@ foreach ($faculties as $acronym => $info) {
       // Description
       $data = current(current($tr)->find('td'))->innertext;
       $course['description'] = strip_tags($data);
-      next($tr);
 
-      // Term availability
-      preg_match('/\[.*?Offered:(.+?)]/i',$data,$match);
-      if (!empty($match[1])) { // if no information is provided, we don't know
-	$course["avail_fall"] = (strpos($match[1],"F")) ? 1 : -1;
-	$course["avail_winter"] = (strpos($match[1],"W")) ? 1 : -1;
-	$course["avail_spring"] = (strpos($match[1],"S")) ? 1 : -1;
-      }
+    // Term availability
+    preg_match('/\[.*?Offered:(.+?)]/i',$data,$match);
+    if ($course['faculty_acronym'] == "CS") {
+     echo $course['faculty_acronym'] . $course['course_number'];
+     echo $data;
+     print_r($match);
+    }
+      
+    if (!empty($match[1])) { // if no information is provided, we don't know
+     $course["avail_fall"] = (strpos($match[1],"F")) ? 1 : -1;
+     $course["avail_winter"] = (strpos($match[1],"W")) ? 1 : -1;
+     $course["avail_spring"] = (strpos($match[1],"S")) ? 1 : -1;
+    }
+      next($tr);
 
       // And then some number of extra fields...
       $extra_fields = array();
@@ -382,6 +388,19 @@ foreach ($faculties as $acronym => $info) {
             $course['needs_instr_consent'] = true;
           } else if (0 === strpos($data, '[Note:')) {
             $course['note_desc'] = $data;
+            // Term availability
+	    preg_match('/\[.*?Offered:(.+?)]/i',$data,$match);
+	    if ($course['faculty_acronym'] == "CS") {
+	     echo $course['faculty_acronym'] . $course['course_number'];
+             echo $data;
+	     print_r($match);
+	    }
+	      
+	    if (!empty($match[1])) { // if no information is provided, we don't know
+	     $course["avail_fall"] = (strpos($match[1],"F")) ? 1 : -1;
+	     $course["avail_winter"] = (strpos($match[1],"W")) ? 1 : -1;
+	     $course["avail_spring"] = (strpos($match[1],"S")) ? 1 : -1;
+	    }
           } else {
             $extra_fields []= $data;
           }
@@ -392,7 +411,6 @@ foreach ($faculties as $acronym => $info) {
       if ($extra_fields) {
         $course['extra_fields'] = $extra_fields;
       }
-      if ($course['faculty_acronym'] == 'ACTSC')
       $courseKey = $course['cid'].$course['faculty_acronym'].$course['course_number']; //ugly, but c'est la vie
       $courses[$courseKey] = $course;
     }

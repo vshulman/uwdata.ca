@@ -50,10 +50,10 @@ CREATE TABLE IF NOT EXISTS `courses` (
   `note_desc` text NOT NULL,
   `src_url` varchar(100) NOT NULL,
   `prereqs` text NOT NULL,
-  'antireqs' text NOT NULL,
-  'coreqs' text NOT NULL,
+  `antireqs` text NOT NULL,
+  `coreqs` text NOT NULL,
   `__last_touched` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  PRIMARY KEY  (`cid`,'faculty_acronym','course_number'),
+  PRIMARY KEY  (`cid`,`faculty_acronym`,`course_number`),
   FULLTEXT KEY `title` (`title`,`description`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
