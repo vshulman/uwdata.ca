@@ -72,12 +72,14 @@ function munge_military_dates($format, &$object) {
     $military_start = intval($match[1].$match[2]);
     $military_end = intval($match[3].$match[4]);
     if ($military_end < $military_start) {
-      $military_start += 1200;
+      $military_end += 1200;
     }
-    if ($military_start <= 700 || $military_end - $military_start >= 130) {
+
+    if ($military_start <= 700 || ($military_end - $military_start >= 200 && $military_end < 1200 && $military_end < 1050)) { //over 2 hrs, not already adjusted, ends before 10:50pm
       $military_start += 1200;
       $military_end += 1200;
     }
+
     $object['start_time'] = $military_start;
     $object['end_time'] = $military_end;
     $object['days'] = $match[5];
@@ -237,7 +239,7 @@ if (preg_match_all('/<OPTION VALUE="([A-Z]+)"(?: SELECTED)?>[A-Z]+/', $index_dat
           foreach ($reserve as $key => $value) {
             $update_query_arr []= $key.'="'.mysql_escape_string($value).'"';
           }
-	 print_r($reserve);
+	 //print_r($reserve);
           $sql = 'INSERT INTO reserves('.implode(',', array_keys($reserve)).') VALUES('.implode(',', $escaped_values).') ON DUPLICATE KEY UPDATE '.implode(',', $update_query_arr).';';
           $db->query($sql);
         }
@@ -254,7 +256,6 @@ if (preg_match_all('/<OPTION VALUE="([A-Z]+)"(?: SELECTED)?>[A-Z]+/', $index_dat
       foreach ($class as $key => $value) {
         $update_query_arr []= $key.'="'.mysql_escape_string($value).'"';
       }
-	echo 'test!!!\n';
      // print_r( $class);
       $sql = 'INSERT INTO classes('.implode(',', array_keys($class)).') VALUES('.implode(',', $escaped_values).') ON DUPLICATE KEY UPDATE '.implode(',', $update_query_arr).';';
       $db->query($sql);

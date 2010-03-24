@@ -6,3 +6,11 @@ api/system
 api/modules
 shovel/data
 shovel/common/db.php
+/shovel/go.php~
+/shovel/common/consts.php~
+/shovel/common/db.php~
+/shovel/common/scraper_tools.php~
+/shovel/calendar/scrape.php~
+/shovel/calendar/sched.php~
+/shovel/calendar/prereqs.php~
+/changes.txt~
